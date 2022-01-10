@@ -3,6 +3,8 @@ const { v4: uuidv4 } = require("uuid")
 
 const prisma = new PrismaClient()
 
+// retryTxn wraps SQL operations in an explicit transaction. 
+// If the transaction fails, the function retries the operation, with exponential backoff.
 async function retryTxn(n, max, operation) {
     while (true) {
         n++
@@ -12,7 +14,7 @@ async function retryTxn(n, max, operation) {
         try {
             await operation()
             await prisma.$queryRaw`COMMIT;`
-            return;
+            return
         } catch (err) {
             if (err.code !== "40001") {
                 return err
@@ -27,14 +29,17 @@ async function retryTxn(n, max, operation) {
     }
 }
 
+// initTable inserts the input row values into the accounts table.
 async function initTable(rowVals) {
     await prisma.accounts.createMany({
         data: rowVals,
         skipDuplicates: true,
     })
-    console.log("Initial account values:\n", await prisma.accounts.findMany())
+    console.log("Account rows added.")
+    return
 }
 
+// updateTable updates existing row values in the accounts table.
 async function updateTable() {
     await prisma.accounts.updateMany({
         where: {
@@ -48,17 +53,19 @@ async function updateTable() {
             }
         },
     })
-    console.log("Updated account values:\n", await prisma.accounts.findMany())
+    console.log("Account rows updated.")
+    return
 }
 
+// deleteRows deletes all rows in the accounts table.
 async function deleteRows() {
-    console.log("Account rows deleted.", await prisma.accounts.deleteMany())
-
+    const deleteAllRows = await prisma.accounts.deleteMany()
+    return console.log("Account rows deleted.", deleteAllRows)
 }
 
-async function main() {
-
-    var accountValues = Array(5);
+// genVals generates random UUID values and integer values to be inserted into the accounts table.
+async function genVals(n) {
+    var accountValues = Array(n);
     let i = 0;
     while (i < accountValues.length) {
         idVal = await uuidv4()
@@ -66,10 +73,24 @@ async function main() {
         accountValues[i] = { id: idVal, balance: balVal }
         i++
     }
+    return accountValues
+}
 
-    await retryTxn(0, 15, initTable(accountValues))
+async function main() {
+
+    const firstAccounts = await genVals(10)
+
+    await retryTxn(0, 15, initTable(firstAccounts))
+
+    await new Promise(r => setTimeout(r, 2000)); // wait 2 seconds before selecting and printing rows
+    const firstRows = await prisma.accounts.findMany()
+    console.log("Initial row values:\n", firstRows)
 
     await retryTxn(0, 15, updateTable)
+
+    await new Promise(r => setTimeout(r, 2000)); // wait 2 seconds before selecting and printing rows
+    const updatedRows = await prisma.accounts.findMany()
+    console.log("Updated row values:\n", updatedRows)
 
     await retryTxn(0, 15, deleteRows)
 
