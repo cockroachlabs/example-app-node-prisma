@@ -1,0 +1,14 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["cockroachdb"]
+}
+
+datasource db {
+  provider = "cockroachdb"
+  url      = env("DATABASE_URL")
+}
+
+model accounts {
+  id      String  @id(map: "primary") @db.Uuid
+  balance BigInt?
+}
