@@ -29,18 +29,18 @@ async function retryTxn (n, max, operation) {
   }
 }
 
-// initTable inserts the input row values into the accounts table.
+// initTable inserts the input row values into the account table.
 async function initTable (rowVals) {
-  await prisma.accounts.createMany({
+  await prisma.account.createMany({
     data: rowVals,
     skipDuplicates: true
   })
   console.log('Account rows added.')
 }
 
-// updateTable updates existing row values in the accounts table.
+// updateTable updates existing row values in the account table.
 async function updateTable () {
-  await prisma.accounts.updateMany({
+  await prisma.account.updateMany({
     where: {
       balance: {
         gt: 100
@@ -55,13 +55,13 @@ async function updateTable () {
   console.log('Account rows updated.')
 }
 
-// deleteRows deletes all rows in the accounts table.
+// deleteRows deletes all rows in the account table.
 async function deleteRows () {
-  const deleteAllRows = await prisma.accounts.deleteMany()
+  const deleteAllRows = await prisma.account.deleteMany()
   return console.log('Account rows deleted.', deleteAllRows)
 }
 
-// genVals generates random UUID values and integer values to be inserted into the accounts table.
+// genVals generates random UUID values and integer values to be inserted into the account table.
 async function genVals (n) {
   const accountValues = Array(n)
   let i = 0
@@ -75,18 +75,18 @@ async function genVals (n) {
 }
 
 async function main () {
-  const firstAccounts = await genVals(10)
+  const firstAccount = await genVals(10)
 
-  await retryTxn(0, 15, initTable(firstAccounts))
+  await retryTxn(0, 15, initTable(firstAccount))
 
   await new Promise(resolve => setTimeout(resolve, 2000)) // wait 2 seconds before selecting and printing rows
-  const firstRows = await prisma.accounts.findMany()
+  const firstRows = await prisma.account.findMany()
   console.log('Initial row values:\n', firstRows)
 
   await retryTxn(0, 15, updateTable)
 
   await new Promise(resolve => setTimeout(resolve, 2000)) // wait 2 seconds before selecting and printing rows
-  const updatedRows = await prisma.accounts.findMany()
+  const updatedRows = await prisma.account.findMany()
   console.log('Updated row values:\n', updatedRows)
 
   await retryTxn(0, 15, deleteRows)
