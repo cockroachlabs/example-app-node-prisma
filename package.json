@@ -1,14 +1,9 @@
 {
   "name": "example-app-node-prisma",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "description": "A simple Node.js CRUD app that uses the Prisma Client ORM to communicate with a CockroachDB cluster.",
+  "bin": "index.js",
+  "license": "Apache-2.0",
   "devDependencies": {
     "@prisma/client": "^3.7.0",
     "prisma": "^3.7.0"
