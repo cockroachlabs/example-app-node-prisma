@@ -3,9 +3,13 @@ const { v4: uuidv4 } = require('uuid')
 
 const prisma = new PrismaClient()
 
-main = async () => {
+const main = async () => {
   const customerIds = Array(10).fill().map(() => ({ id: uuidv4() }))
-  const accountValues = Array(10).fill().map((_, index) => ({ id: uuidv4(), customer_id: customerIds[index].id, balance: Math.floor(Math.random() * 1000) }))
+  const accountValues = Array(10).fill().map((_, index) => ({
+    id: uuidv4(),
+    customer_id: customerIds[index].id,
+    balance: Math.floor(Math.random() * 1000)
+  }))
 
   const insertCustomerRows = await prisma.customer.createMany({
     data: customerIds
