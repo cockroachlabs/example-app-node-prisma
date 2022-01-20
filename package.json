@@ -1,0 +1,12 @@
+{
+  "name": "example-app-node-prisma",
+  "version": "1.0.0",
+  "description": "A simple Node.js CRUD app that uses the Prisma Client ORM to communicate with a CockroachDB cluster.",
+  "bin": "index.js",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@prisma/client": "^3.7.0",
+    "prisma": "^3.7.0",
+    "uuid": "^8.3.2"
+  }
+}
