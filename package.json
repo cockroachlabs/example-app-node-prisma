@@ -5,8 +5,8 @@
   "bin": "index.js",
   "license": "Apache-2.0",
   "dependencies": {
-    "@prisma/client": "3.12",
-    "prisma": "3.12",
+    "@prisma/client": "3.14",
+    "prisma": "3.14",
     "uuid": "8.3.2"
   }
 }
